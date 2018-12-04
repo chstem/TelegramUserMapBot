@@ -1,0 +1,54 @@
+{
+    "start" : {
+        "en" : "Tell me your (approximate) place of residence using `/region <city>` or send me a set of coordinates with `/geo <lat> <lng>`. Send `/map` to get to the map with all known users locations. Send `/help` to see a list of all available commands.",
+        "de" : "Sende mir deinen (ungefähren) Wohnort mit `/region <Ort>` oder `/geo <lat> <lng>`. Sende `/map` um eine Karte mit allen eingetragenen SF Usern zu sehen. Mit `/help` kannst du dir eine komplette Liste aller Befehle anzeigen lassen."
+    },
+    "intro" : {
+        "en" : "Hi, I am @{username}. You may tell me your (approximate) place of residence, so we get an idea where our community lives. The current map can be found [here]({map}). With /help@{username} you may get a list of my commands.",
+        "de" : "Hallo, ich bin @{username}. Du kannst mir deinen (ungefähren) Wohnort mitteilen, damit wir eine Übersicht bekommen wo unsere Community verteilt ist. Die aktuelle Karte findest du [hier]({map}). Mit /help@{username} bekommst du eine Übersicht meiner Befehle."
+    },
+    "help" : {
+        "en" : "List of available commands:\n    `/region <city>` - pass (approximate) place of residence\n    `/geo <lat> <lng>` - pass latitude and longitude directly\n    `/map` - link to map\n    `/get` - show your stored datan\n    `/delete` - delete your stored data\n    `/intro` - show short bot introduction\n    `/help` - show list of all available commands",
+        "de" : "Liste der verfügbaren Befehle:\n    `/region <Ort>` - (ungefähren) Wohnort angeben\n    `/geo <lat> <lng>` - Breiten- und Längengrad direkt eintragen\n    `/map` - Link zur Karte\n    `/get` - gespeicherten Daten anzeigen\n    `/delete` - deine Daten löschen\n    `/intro` - Kurzvorstellung\n    `/help` - Liste der verfügbaren Befehle anzeigen"
+    },
+    "region_help" : {
+        "en" : "Please add a place or city after the `/region` command",
+        "de" : "Bitte ergänze einen Ort nach dem `/region` Befehl."
+    },
+    "region_success" : {
+        "en" : "Thank you, I have stored \"{loc}\" for you.",
+        "de" : "Danke. Ich habe für dich \"{loc}\" abgespeichert."
+    },
+    "region_error" : {
+        "en" : "Sorry, I can't find \"{loc}\".",
+        "de" : "Ich kann \"{loc}\" leider nicht finden."
+    },
+    "geo_success" : {
+        "en" : "Thank you, I have stored your coordinates.",
+        "de" : "Danke. Ich habe habe deine Koordinaten abgespeichert."
+    },
+    "geo_help" : {
+        "en" : "Please add latitude and longitude after the `/geo` command.",
+        "de" : "Bitte ergänze Breiten- und Längengrad nach dem `/geo` Befehl."
+    },
+    "get_found" : {
+        "en" : "The following data is stored about you:\n    Location: {loc}\n    Coordinates: {lat}, {lng}\n    Last updated: {time}",
+        "de" : "Folgende Daten sind für dich abgespeichert:\n    Ort: {loc}\n    Koordinaten: {lat}, {lng}\n    Zuletzt aktualisiert: {time}"
+    },
+    "get_notfound" : {
+        "en" : "There is no data stored about you.",
+        "de" : "Für dich sind keine Daten vorhanden."
+    },
+    "delete" : {
+        "en" : "All your data has been deleted.",
+        "de" : "Deine Daten wurden gelöscht."
+    },
+    "unkown" : {
+        "en" : "Sorry, I don't know that command.",
+        "de" : "Tut mir Leid, ich verstehe deinen Befehl nicht."
+    },
+    "hint" : {
+        "en" : "\nHint: Start a chat with me (@{botname}), so I can answer you privately.",
+        "de" : "\nHinweis: Starte einen Chat mit mir (@{botname}), damit ich dir privat antworten kann."
+    }
+}

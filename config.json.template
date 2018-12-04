@@ -1,0 +1,10 @@
+{
+ "BOT_TOKEN" : "<insert token here>",
+ "DSTK_URL" : "http://www.datasciencetoolkit.org/",
+ "map_url" : "<link to the final map>",
+ "database_file" : "locations.db",
+ "export_file" : "locations.csv",
+ "log_file" : "mapbot.log"
+ "lang" : "en"
+}
+

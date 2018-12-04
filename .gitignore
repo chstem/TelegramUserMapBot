@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+*.db
+*.loc
+config.json
+locations.csv
+locations.json
+
