@@ -10,10 +10,12 @@ from pkg_resources import resource_string
 import database as db
 
 L10N_FILE = resource_string(__name__, "l10n.json")
+CONFIG_DIR = '/etc/TelegramUserMapBot'
+CONFIG_DEFAULT = CONFIG_DIR + '/config.json'
 
 ### configuration
 
-with open('config.json') as fd:
+with open(CONFIG_DEFAULT) as fd:
     config = json.load(fd)
 
 logging.basicConfig(
