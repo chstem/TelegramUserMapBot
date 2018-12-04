@@ -147,6 +147,7 @@ def get(bot, update):
 def delete(bot, update):
     db.delete_user(update.message.from_user.id)
     send_message(bot, update, gettext('delete'))
+    export()
 
 def unknown(bot, update):
     send_message(bot, update, gettext('unkown'))
