@@ -6,10 +6,10 @@ import re
 from requests.compat import urljoin
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 from telegram import ParseMode, error
-from pkg_resources import resource_string
+from pkg_resources import resource_filename
 import database as db
 
-L10N_FILE = resource_string(__name__, "l10n.json")
+L10N_FILE = resource_filename(__name__, "l10n.json")
 CONFIG_DIR = '/etc/TelegramUserMapBot'
 CONFIG_DEFAULT = CONFIG_DIR + '/config.json'
 
