@@ -6,8 +6,10 @@ import re
 from requests.compat import urljoin
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 from telegram import ParseMode, error
-
+from pkg_resources import resource_string
 import database as db
+
+L10N_FILE = resource_string(__name__, "l10n.json")
 
 ### configuration
 
@@ -22,7 +24,7 @@ logging.basicConfig(
 
 db.initialize(config['database_file'])
 
-with open('l10n.json') as fd:
+with open(L10N_FILE) as fd:
     l10n = json.load(fd)
 
 ### Utililty functions
