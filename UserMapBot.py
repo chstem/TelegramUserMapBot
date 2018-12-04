@@ -13,21 +13,8 @@ L10N_FILE = resource_string(__name__, "l10n.json")
 CONFIG_DIR = '/etc/TelegramUserMapBot'
 CONFIG_DEFAULT = CONFIG_DIR + '/config.json'
 
-### configuration
-
-with open(CONFIG_DEFAULT) as fd:
-    config = json.load(fd)
-
-logging.basicConfig(
-    filename = config['log_file'],
-    format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    level = logging.INFO,
-)
-
-db.initialize(config['database_file'])
-
-with open(L10N_FILE) as fd:
-    l10n = json.load(fd)
+config = ''
+l10n = ''
 
 ### Utililty functions
 
@@ -163,6 +150,25 @@ def delete(bot, update):
 
 def unknown(bot, update):
     send_message(bot, update, gettext('unkown'))
+
+### configuration
+
+with open(CONFIG_DEFAULT) as fd:
+    config = json.load(fd)
+
+with open(L10N_FILE) as fd:
+    l10n = json.load(fd)
+
+
+logging.basicConfig(
+    filename = config['log_file'],
+    format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    level = logging.INFO,
+)
+
+
+    
+db.initialize(config['database_file'])
 
 ### Register Handlers
 
