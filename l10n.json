@@ -24,12 +24,12 @@
         "de" : "Ich kann \"{loc}\" leider nicht finden."
     },
     "geo_success" : {
-        "en" : "Thank you, I have stored your coordinates.",
-        "de" : "Danke. Ich habe habe deine Koordinaten abgespeichert."
+        "en" : "Thank you, I have stored the coordinates `{lat} {lng}` ({loc}).",
+        "de" : "Danke. Ich habe habe die Koordinaten `{lat} {lng}` ({loc}) abgespeichert."
     },
     "geo_help" : {
-        "en" : "Please add latitude and longitude after the `/geo` command.",
-        "de" : "Bitte ergänze Breiten- und Längengrad nach dem `/geo` Befehl."
+        "en" : "Sorry, I could not parse your coordinates. Please pass latitude and longitude like this: `/geo <lat> <lng>` command.",
+        "de" : "Tut mir Leid, ich konnte deine Angaben nicht interpretieren. Bitte ergänze Breiten- und Längengrad: `/geo <lat> <lng>` Befehl."
     },
     "get_found" : {
         "en" : "The following data is stored about you:\n    Location: {loc}\n    Coordinates: {lat}, {lng}\n    Last updated: {time}",

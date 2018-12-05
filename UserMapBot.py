@@ -2,6 +2,7 @@
 import json
 import logging
 import requests
+import re
 from requests.compat import urljoin
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 from telegram import ParseMode, error
@@ -38,7 +39,7 @@ def parse_location(location):
         return None
 
 def parse_geo(lat, lng):
-    url = urljoin(config['DSTK_URL'], 'coordinates2politics/{},{}'.format(lat,lng))
+    url = urljoin(config['DSTK_URL'], 'coordinates2politics/{},{}'.format(lat, lng))
     r = requests.get(url)
     results = r.json()
     if results:
@@ -89,13 +90,12 @@ def show_help(bot, update):
 
 def region(bot, update):
 
-    cmd = update.message.text.split()
+    location = update.message.text[8:]   # cut '/region '
 
-    if len(cmd) < 2:
+    if not location:
         send_message(bot, update, gettext('region_help'), parse_mode=ParseMode.MARKDOWN)
         return
 
-    location = cmd[1]
     geo = parse_location(location)
 
     if geo:
@@ -111,18 +111,15 @@ def region(bot, update):
 def geo(bot, update):
 
     cmd = update.message.text.split()
-    lat, lng = '', ''
+    coord = update.message.text[5:]     # cut '/geo '
+    match = re.match('(\d*\.\d*)[^\d\.]*(\d*\.\d*)', coord)
 
-    if len(cmd) == 2:
-        if ',' in cmd[1]:
-            lat, lng = cmd[1].split(',')
-    elif len(cmd) >= 3:
-        lat, lng = cmd[1:3]
-
-    if lat:
+    if match:
+        lat, lng = match.groups()
         location = parse_geo(lat, lng)
         db.set_location(update.message.from_user.id, location, lat, lng)
-        send_message(bot, update, gettext('geo_success'))
+        text = gettext('geo_success').format(lat=lat, lng=lng, loc=location)
+        send_message(bot, update, text, parse_mode=ParseMode.MARKDOWN)
         export()
 
     else:
