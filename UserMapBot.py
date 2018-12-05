@@ -115,8 +115,13 @@ def geo(bot, update):
     match = re.match('(\d*\.\d*)[^\d\.]*(\d*\.\d*)', coord)
 
     if match:
-        lat, lng = match.groups()
-        location = parse_geo(lat, lng)
+        try:
+            lat, lng = match.groups()
+            location = parse_geo(lat, lng)
+        except:
+            send_message(bot, update, gettext('geo_help'))
+            raise
+
         db.set_location(update.message.from_user.id, location, lat, lng)
         text = gettext('geo_success').format(lat=lat, lng=lng, loc=location)
         send_message(bot, update, text, parse_mode=ParseMode.MARKDOWN)
