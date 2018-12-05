@@ -112,11 +112,17 @@ def geo(bot, update):
 
     cmd = update.message.text.split()
     coord = update.message.text[5:]     # cut '/geo '
-    match = re.match('(\d*\.\d*)[^\d\.]*(\d*\.\d*)', coord)
+    match = re.match('(\d*\.\d*)[^\d\.]+(\d*\.\d*)', coord)
+    if not match:
+        # try ',' as decimal separator
+        match = re.match('(\d*,\d*)[^\d,]+(\d*,\d*)', coord)
 
     if match:
         try:
             lat, lng = match.groups()
+            if ',' in lat:
+                lat = lat.replace(',', '.')
+                lng = lng.replace(',', '.')
             location = parse_geo(lat, lng)
         except:
             send_message(bot, update, gettext('geo_help'))
