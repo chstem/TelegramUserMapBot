@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import argparse
 import json
 import logging
 import re
@@ -151,9 +152,15 @@ class UserMapBot:
 
     def run(self):
 
-        ### configuration
+        parser = argparse.ArgumentParser()
+        parser.add_argument('--config', help='config file')
 
-        with open(self.__CONFIG_DEFAULT) as fd:
+        args = parser.parse_args()
+
+        ### configuration
+        if args.config:
+            config_RAW = args.config
+        else:
             config_RAW = self.__CONFIG_DEFAULT
 
         with open(config_RAW) as fd:
