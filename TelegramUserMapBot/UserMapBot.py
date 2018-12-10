@@ -228,3 +228,9 @@ class UserMapBot:
 
         ### On exit
         logging.shutdown()
+def main():
+    bot = UserMapBot()
+    bot.run()
+
+if __name__ == '__main__':
+    main()
