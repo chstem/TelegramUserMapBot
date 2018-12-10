@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 import argparse
+import os
+import sys
 import json
 import logging
 import re
@@ -160,6 +162,10 @@ class UserMapBot:
         ### configuration
         if args.config:
             config_RAW = args.config
+            if not os.path.exists(config_RAW):
+                print("given config doesn't exist", file=sys.stderr)
+                sys.exit(1)
+
         else:
             config_RAW = self.__CONFIG_DEFAULT
 
