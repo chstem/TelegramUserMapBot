@@ -145,7 +145,8 @@ class UserMapBot:
 
     def region(self, bot, update):
 
-        location = update.message.text[8:]   # cut '/region '
+        i = update.message.text.find(' ')
+        location = update.message.text[i+1:]   # everything after first space
 
         if not location:
             self.send_message(bot, update,
@@ -172,7 +173,6 @@ class UserMapBot:
         if not match:
             # try ',' as decimal separator
             match = re.match('(\d*,\d*)[^\d,]+(\d*,\d*)', coord)
-
 
         if match:
             try:
