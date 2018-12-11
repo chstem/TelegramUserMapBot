@@ -78,11 +78,11 @@ class UserMapBot:
 
     def stop(self):
         self.updater.stop()
-        logging.shutdown()
 
     def __del__(self):
         self.stop()
         db.close()
+        logging.shutdown()
 
     ### utililty functions
 
