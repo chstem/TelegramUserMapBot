@@ -9,6 +9,7 @@ import requests
 from requests.compat import urljoin
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 from telegram import ParseMode, error
+from types import SimpleNamespace
 from pkg_resources import resource_filename
 import TelegramUserMapBot.database as db
 
@@ -19,12 +20,12 @@ class UserMapBot:
     __CONFIG_DEFAULT = __CONFIG_DIR + '/config.json'
 
     def __init__(self):
-        self.config = ''
+        self.config = SimpleNamespace(**config)
         self.l10n = ''
 
     ### Utililty functions
     def parse_location(self, location):
-        url = urljoin(self.config['DSTK_URL'], '/maps/api/geocode/json')
+        url = urljoin(self.config.DSTK_URL, '/maps/api/geocode/json')
         payload = {'address' : location}
         r = requests.get(url, params=payload)
         results = r.json()['results']
@@ -35,7 +36,7 @@ class UserMapBot:
             return None
 
     def parse_geo(self, lat, lng):
-        url = urljoin(self.config['DSTK_URL'], 'coordinates2politics/{},{}'.format(lat,lng))
+        url = urljoin(self.config.DSTK_URL, 'coordinates2politics/{},{}'.format(lat,lng))
         r = requests.get(url)
         results = r.json()
         if results:
@@ -44,7 +45,7 @@ class UserMapBot:
             return ''
 
     def export(self):
-        fname = config['export_file']
+        fname = config.export_file
         if fname.endswith('.csv'):
             db.export_csv(fname)
         elif fname.endswith('.json'):
@@ -61,7 +62,7 @@ class UserMapBot:
             bot.send_message(chat_id, text, **kwargs)
 
     def gettext(self, key):
-        text = self.l10n[key].get(self.config['lang'])
+        text = self.l10n[key].get(self.config.lang)
         if not text:
             # fallback to en
             text = self.l10n[key].get('en')
@@ -73,7 +74,7 @@ class UserMapBot:
         self.send_message(bot, update, self.gettext('start'), parse_mode=ParseMode.MARKDOWN)
 
     def intro(self, bot, update):
-        text = self.gettext('intro').format(username=bot.username, map=config['map_url'])
+        text = self.gettext('intro').format(username=bot.username, map=self.config.map_url)
         bot.send_message(update.message.chat_id, text, parse_mode=ParseMode.MARKDOWN)
 
     def show_help(self, bot, update):
@@ -128,7 +129,7 @@ class UserMapBot:
 
 
     def show_map(self, bot, update):
-        self.send_message(bot, update, self.config['map_url'])
+        self.send_message(bot, update, self.config.map_url)
 
     def get(self, bot, update):
         user = db.get_user(update.message.from_user.id)
@@ -178,19 +179,19 @@ class UserMapBot:
 
         ### Authorizing with Telegram Bot API
 
-        updater = Updater(token=self.config['BOT_TOKEN'])
+        updater = Updater(token=self.config.BOT_TOKEN)
         dispatcher = updater.dispatcher
 
 
         logging.basicConfig(
-            filename = self.config['log_file'],
+            filename = self.config.log_file,
             format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
             level = logging.INFO,
         )
 
 
     
-        db.initialize(self.config['database_file'])
+        db.initialize(self.config.database_file)
 
         ### Register Handlers
 
