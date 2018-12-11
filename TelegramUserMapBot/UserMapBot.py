@@ -11,19 +11,97 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 from telegram import ParseMode, error
 from types import SimpleNamespace
 from pkg_resources import resource_filename
+
 import TelegramUserMapBot.database as db
 
 
 class UserMapBot:
+
     __L10N_FILE = resource_filename(__name__, "l10n.json")
     __CONFIG_DIR = '/etc/TelegramUserMapBot'
     __CONFIG_DEFAULT = __CONFIG_DIR + '/config.json'
 
-    def __init__(self):
-        self.config = SimpleNamespace(**config)
-        self.l10n = ''
+    def __init__(self, *args):
 
-    ### Utililty functions
+        parser = argparse.ArgumentParser()
+        parser.add_argument('--config', help='config file')
+
+        args = parser.parse_args(*args)
+
+        # configuration
+        if args.config:
+            config_RAW = args.config
+            if not os.path.exists(config_RAW):
+                print("given config doesn't exist", file=sys.stderr)
+                sys.exit(1)
+
+        else:
+            config_RAW = self.__CONFIG_DEFAULT
+
+        with open(config_RAW) as fd:
+            config = json.load(fd)
+
+        self.config = SimpleNamespace(**config)
+
+        # localization
+        with open(self.__L10N_FILE) as fd:
+            self.l10n = json.load(fd)
+
+        # local database
+        db.initialize(self.config.database_file)
+
+        # authorizing with Telegram Bot API
+        self.updater = Updater(token=self.config.BOT_TOKEN)
+        self.dispatcher = self.updater.dispatcher
+
+        # logging
+        logging.basicConfig(
+            filename = self.config.log_file,
+            format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+            level = logging.INFO,
+        )
+
+        # register handlers
+        start_handler = CommandHandler('start', self.start)
+        self.dispatcher.add_handler(start_handler)
+
+        intro_handler = CommandHandler('intro', self.intro)
+        self.dispatcher.add_handler(intro_handler)
+
+        help_handler = CommandHandler('help', self.show_help)
+        self.dispatcher.add_handler(help_handler)
+
+        region_handler = CommandHandler('region', self.region)
+        self.dispatcher.add_handler(region_handler)
+
+        geo_handler = CommandHandler('geo', self.geo)
+        self.dispatcher.add_handler(geo_handler)
+
+        get_handler = CommandHandler('get', self.get)
+        self.dispatcher.add_handler(get_handler)
+
+        delete_handler = CommandHandler('delete', self.delete)
+        self.dispatcher.add_handler(delete_handler)
+
+        map_handler = CommandHandler('map', self.show_map)
+        self.dispatcher.add_handler(map_handler)
+
+        unknown_handler = MessageHandler(Filters.command, self.unknown)
+        self.dispatcher.add_handler(unknown_handler)
+
+    def run(self):
+        self.updater.start_polling()
+
+    def stop(self):
+        self.updater.stop()
+        logging.shutdown()
+
+    def __del__(self):
+        self.stop()
+        db.close()
+
+    ### utililty functions
+
     def parse_location(self, location):
         url = urljoin(self.config.DSTK_URL, '/maps/api/geocode/json')
         payload = {'address' : location}
@@ -44,15 +122,16 @@ class UserMapBot:
         else:
             return ''
 
-    def export(self):
-        fname = config.export_file
+    def export(self, fname=''):
+        if not fname:
+            fname = self.config.export_file
         if fname.endswith('.csv'):
             db.export_csv(fname)
         elif fname.endswith('.json'):
             db.export_geojson(fname)
 
     def send_message(self, bot, update, text, **kwargs):
-        """Wrapper for bot.send_message. Try to send to User first."""
+        """Wrapper for bot.send_message. Try to send to user first, then to orignal channel."""
         chat_id = update.message.chat_id
         user_id = update.message.from_user.id
         try:
@@ -68,8 +147,8 @@ class UserMapBot:
             text = self.l10n[key].get('en')
         return text
 
+    ### define bot commands
 
-    ### define Bot Commands
     def start(self, bot, update):
         self.send_message(bot, update, self.gettext('start'), parse_mode=ParseMode.MARKDOWN)
 
@@ -127,6 +206,8 @@ class UserMapBot:
             self.send_message(bot, update, text, parse_mode=ParseMode.MARKDOWN)
             self.export()
 
+        else:
+            self.send_message(bot, update, self.gettext('geo_help'))
 
     def show_map(self, bot, update):
         self.send_message(bot, update, self.config.map_url)
@@ -152,85 +233,9 @@ class UserMapBot:
     def unknown(self, bot, update):
         self.send_message(bot, update, self.gettext('unkown'))
 
-
-    def run(self):
-
-        parser = argparse.ArgumentParser()
-        parser.add_argument('--config', help='config file')
-
-        args = parser.parse_args()
-
-        ### configuration
-        if args.config:
-            config_RAW = args.config
-            if not os.path.exists(config_RAW):
-                print("given config doesn't exist", file=sys.stderr)
-                sys.exit(1)
-
-        else:
-            config_RAW = self.__CONFIG_DEFAULT
-
-        with open(config_RAW) as fd:
-            self.config = json.load(fd)
-
-        with open(self.__L10N_FILE) as fd:
-            self.l10n = json.load(fd)
-
-
-        ### Authorizing with Telegram Bot API
-
-        updater = Updater(token=self.config.BOT_TOKEN)
-        dispatcher = updater.dispatcher
-
-
-        logging.basicConfig(
-            filename = self.config.log_file,
-            format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-            level = logging.INFO,
-        )
-
-
-    
-        db.initialize(self.config.database_file)
-
-        ### Register Handlers
-
-        start_handler = CommandHandler('start', self.start)
-        dispatcher.add_handler(start_handler)
-
-        intro_handler = CommandHandler('intro', self.intro)
-        dispatcher.add_handler(intro_handler)
-
-        help_handler = CommandHandler('help', self.show_help)
-        dispatcher.add_handler(help_handler)
-
-        region_handler = CommandHandler('region', self.region)
-        dispatcher.add_handler(region_handler)
-
-        geo_handler = CommandHandler('geo', self.geo)
-        dispatcher.add_handler(geo_handler)
-
-        get_handler = CommandHandler('get', self.get)
-        dispatcher.add_handler(get_handler)
-
-        delete_handler = CommandHandler('delete', self.delete)
-        dispatcher.add_handler(delete_handler)
-
-        map_handler = CommandHandler('map', self.show_map)
-        dispatcher.add_handler(map_handler)
-
-        unknown_handler = MessageHandler(Filters.command, self.unknown)
-        dispatcher.add_handler(unknown_handler)
-
-        ### Run
-
-        print('bot initialized')
-        updater.start_polling()
-
-        ### On exit
-        logging.shutdown()
 def main():
     bot = UserMapBot()
+    print('bot initialized')
     bot.run()
 
 if __name__ == '__main__':
