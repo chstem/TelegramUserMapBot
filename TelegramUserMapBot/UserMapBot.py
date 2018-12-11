@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-import argparse
 import os
 import sys
 import json
@@ -16,29 +15,14 @@ import TelegramUserMapBot.database as db
 
 
 class UserMapBot:
+    __CONFIG_DIR = '/etc/TelegramUserMapBot'
+    CONFIG_DEFAULT = __CONFIG_DIR + '/config.json'
 
     __L10N_FILE = resource_filename(__name__, "l10n.json")
-    __CONFIG_DIR = '/etc/TelegramUserMapBot'
-    __CONFIG_DEFAULT = __CONFIG_DIR + '/config.json'
 
-    def __init__(self, *args):
+    def __init__(self, config):
 
-        parser = argparse.ArgumentParser()
-        parser.add_argument('--config', help='config file')
-
-        args = parser.parse_args(*args)
-
-        # configuration
-        if args.config:
-            config_RAW = args.config
-            if not os.path.exists(config_RAW):
-                print("given config doesn't exist", file=sys.stderr)
-                sys.exit(1)
-
-        else:
-            config_RAW = self.__CONFIG_DEFAULT
-
-        with open(config_RAW) as fd:
+        with open(config) as fd:
             config = json.load(fd)
 
         self.config = SimpleNamespace(**config)
@@ -234,7 +218,23 @@ class UserMapBot:
         self.send_message(bot, update, self.gettext('unkown'))
 
 def main():
-    bot = UserMapBot()
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--config', help='config file')
+
+    args = parser.parse_args()
+
+    # configuration
+    if args.config:
+        config_RAW = args.config
+        if not os.path.exists(config_RAW):
+            print("given config doesn't exist", file=sys.stderr)
+            sys.exit(1)
+
+    else:
+        config_RAW = UserMapBot.CONFIG_DEFAULT
+
+    bot = UserMapBot(config_RAW)
     print('bot initialized')
     bot.run()
 
