@@ -2,7 +2,7 @@ import datetime
 from peewee import *
 import json
 
-db = SqliteDatabase(None, threadlocals=False, check_same_thread=False)
+db = SqliteDatabase(None)
 
 class BaseModel(Model):
     class Meta:
