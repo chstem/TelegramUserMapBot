@@ -1,0 +1,9 @@
+[Unit]
+Description=TelegramUserMaptBot
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/telegramusermapbot
+
+[Install]
+WantedBy=multi-user.target
