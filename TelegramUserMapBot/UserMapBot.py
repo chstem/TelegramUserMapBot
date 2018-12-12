@@ -219,6 +219,8 @@ class UserMapBot:
 
 def main():
     import argparse
+    import signal
+
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', help='config file')
 
@@ -235,6 +237,14 @@ def main():
         config_RAW = UserMapBot.CONFIG_DEFAULT
 
     bot = UserMapBot(config_RAW)
+
+    def botstop(__signo, __stackframe):
+        bot.stop()
+        sys.exit(__signo)
+
+    signal.signal(signal.SIGTERM, botstop)
+    signal.signal(signal.SIGINT, botstop)
+
     print('bot initialized')
     bot.run()
 
