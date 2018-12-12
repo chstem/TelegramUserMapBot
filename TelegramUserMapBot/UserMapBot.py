@@ -11,7 +11,7 @@ from telegram import ParseMode, error
 from types import SimpleNamespace
 from pkg_resources import resource_filename
 
-import TelegramUserMapBot.database as db
+import TelegramUserMapBot.Database as db
 
 
 class UserMapBot:
@@ -32,8 +32,7 @@ class UserMapBot:
             self.l10n = json.load(fd)
 
         # local database
-        db.initialize(self.config.database_file)
-
+        self.db = db.UserDatabase(self.config.database_file)
         # authorizing with Telegram Bot API
         self.updater = Updater(token=self.config.BOT_TOKEN)
         self.dispatcher = self.updater.dispatcher
@@ -81,7 +80,6 @@ class UserMapBot:
 
     def __del__(self):
         self.stop()
-        db.close()
         logging.shutdown()
 
     ### utililty functions
@@ -110,9 +108,9 @@ class UserMapBot:
         if not fname:
             fname = self.config.export_file
         if fname.endswith('.csv'):
-            db.export_csv(fname)
+            self.db.export_csv(fname)
         elif fname.endswith('.json'):
-            db.export_geojson(fname)
+            self.db.export_geojson(fname)
 
     def send_message(self, bot, update, text, **kwargs):
         """Wrapper for bot.send_message. Try to send to user first, then to orignal channel."""
@@ -157,7 +155,7 @@ class UserMapBot:
 
         if geo:
             lat, lng = geo
-            db.set_location(update.message.from_user.id, location, lat, lng)
+            self.db.set_location(update.message.from_user.id, location, lat, lng)
             text = self.gettext('region_success').format(loc=location)
             self.send_message(bot, update, text, parse_mode=ParseMode.MARKDOWN)
             self.export()
@@ -185,7 +183,7 @@ class UserMapBot:
                 self.send_message(bot, update, self.gettext('geo_help'))
                 raise
 
-            db.set_location(update.message.from_user.id, location, lat, lng)
+            self.db.set_location(update.message.from_user.id, location, lat, lng)
             text = self.gettext('geo_success').format(lat=lat, lng=lng, loc=location)
             self.send_message(bot, update, text, parse_mode=ParseMode.MARKDOWN)
             self.export()
@@ -197,7 +195,7 @@ class UserMapBot:
         self.send_message(bot, update, self.config.map_url)
 
     def get(self, bot, update):
-        user = db.get_user(update.message.from_user.id)
+        user = self.db.get_user(update.message.from_user.id)
         if user:
             text = self.gettext('get_found').format(
                 loc = user.location,
@@ -210,7 +208,7 @@ class UserMapBot:
         self.send_message(bot, update, text)
 
     def delete(self, bot, update):
-        db.delete_user(update.message.from_user.id)
+        self.db.delete_user(update.message.from_user.id)
         self.send_message(bot, update, self.gettext('delete'))
         self.export()
 
