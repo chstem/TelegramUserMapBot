@@ -227,12 +227,14 @@ def main():
     # configuration
     if args.config:
         config_RAW = args.config
-        if not os.path.exists(config_RAW):
-            print("given config doesn't exist", file=sys.stderr)
-            sys.exit(1)
-
     else:
         config_RAW = UserMapBot.CONFIG_DEFAULT
+
+    if not os.path.exists(config_RAW):
+        print("Given config doesn't exist, please setup the bot first", file=sys.stderr)
+        print("(see:", resource_filename(__name__, 'config.json.template'),")",
+              file=sys.stderr)
+        sys.exit(1)
 
     bot = UserMapBot(config_RAW)
     print('bot initialized')
