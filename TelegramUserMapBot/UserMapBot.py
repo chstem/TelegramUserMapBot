@@ -220,6 +220,8 @@ def main():
     import signal
 
     parser = argparse.ArgumentParser()
+    parser.add_argument('--export', help='export currently stored data, instead of running the bot', action='store_true')
+    parser.add_argument('--print', help='print currently stored data, instead of running the bot', action='store_true')
     parser.add_argument('--config', help='config file')
 
     args = parser.parse_args()
@@ -237,6 +239,15 @@ def main():
         sys.exit(1)
 
     bot = UserMapBot(config_RAW)
+
+    if args.export:
+        bot.export()
+
+    if args.print:
+        bot.db.print_all()
+
+    if args.export or args.print:
+        return
 
     def botstop(__signo, __stackframe):
         bot.stop()
