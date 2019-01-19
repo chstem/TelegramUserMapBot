@@ -1,54 +1,67 @@
 {
     "start" : {
         "en" : "Tell me your (approximate) place of residence using `/region <city>` or send me a set of coordinates with `/geo <lat> <lng>`. Send `/map` to get to the map with all known users locations. Send `/help` to see a list of all available commands.",
-        "de" : "Sende mir deinen (ungefähren) Wohnort mit `/region <Ort>` oder `/geo <lat> <lng>`. Sende `/map` um eine Karte mit allen eingetragenen SF Usern zu sehen. Mit `/help` kannst du dir eine komplette Liste aller Befehle anzeigen lassen."
+        "de" : "Sende mir deinen (ungefähren) Wohnort mit `/region <Ort>` oder `/geo <lat> <lng>`. Sende `/map` um eine Karte mit allen eingetragenen SF Usern zu sehen. Mit `/help` kannst du dir eine komplette Liste aller Befehle anzeigen lassen.",
+        "ru" : "Отправь мне твоё (приблизительное) место проживания с помощью `/region <город>` или отправь набор координат с помощью `/geo <широта> <долгота>`. Отправь `/map`, чтобы получить ссылку на карту с местоположением других пользователей. Отправь `/help`, чтобы получить список всех доступных команд."
     },
     "intro" : {
         "en" : "Hi, I am @{username}. You may tell me your (approximate) place of residence, so we get an idea where our community lives. The current map can be found [here]({map}). With /help@{username} you may get a list of my commands.",
-        "de" : "Hallo, ich bin @{username}. Du kannst mir deinen (ungefähren) Wohnort mitteilen, damit wir eine Übersicht bekommen wo unsere Community verteilt ist. Die aktuelle Karte findest du [hier]({map}). Mit /help@{username} bekommst du eine Übersicht meiner Befehle."
+        "de" : "Hallo, ich bin @{username}. Du kannst mir deinen (ungefähren) Wohnort mitteilen, damit wir eine Übersicht bekommen wo unsere Community verteilt ist. Die aktuelle Karte findest du [hier]({map}). Mit /help@{username} bekommst du eine Übersicht meiner Befehle.",
+        "ru" : "Привет, я @{username}. Ты можешь сообщить мне своё (приблизительное) место проживания, чтобы мы могли понять, где проживают участники нашего сообщества. Актуальную карту можно найти [здесь]({map}). С помощью /help@{username} вы можете получить список моих команд."
     },
     "help" : {
         "en" : "List of available commands:\n    `/region <city>` - pass (approximate) place of residence\n    `/geo <lat> <lng>` - pass latitude and longitude directly\n    `/map` - link to map\n    `/get` - show your stored datan\n    `/delete` - delete your stored data\n    `/intro` - show short bot introduction\n    `/help` - show list of all available commands",
-        "de" : "Liste der verfügbaren Befehle:\n    `/region <Ort>` - (ungefähren) Wohnort angeben\n    `/geo <lat> <lng>` - Breiten- und Längengrad direkt eintragen\n    `/map` - Link zur Karte\n    `/get` - gespeicherten Daten anzeigen\n    `/delete` - deine Daten löschen\n    `/intro` - Kurzvorstellung\n    `/help` - Liste der verfügbaren Befehle anzeigen"
+        "de" : "Liste der verfügbaren Befehle:\n    `/region <Ort>` - (ungefähren) Wohnort angeben\n    `/geo <lat> <lng>` - Breiten- und Längengrad direkt eintragen\n    `/map` - Link zur Karte\n    `/get` - gespeicherten Daten anzeigen\n    `/delete` - deine Daten löschen\n    `/intro` - Kurzvorstellung\n    `/help` - Liste der verfügbaren Befehle anzeigen",
+        "ru" : "Список доступных команд:\n    `/region <город>` - передать (приблизительное) место проживания\n    `/geo <широта> <долгота>` - передать широту и долготу напрямую\n    `/map` - ссылка на карту\n    `/get` - показать сохранённые данные\n    `/delete` - удалить сохранённые данные\n    `/intro` - короткое представление бота\n    `/help` - показать список всех доступных команд"
     },
     "region_help" : {
         "en" : "Please add a place or city after the `/region` command",
-        "de" : "Bitte ergänze einen Ort nach dem `/region` Befehl."
+        "de" : "Bitte ergänze einen Ort nach dem `/region` Befehl.",
+        "ru" : "Пожалуйста, добавь место или город после команды `/region`."
     },
     "region_success" : {
         "en" : "Thank you, I have stored \"{loc}\" for you.",
-        "de" : "Danke. Ich habe für dich \"{loc}\" abgespeichert."
+        "de" : "Danke. Ich habe für dich \"{loc}\" abgespeichert.",
+        "ru" : "Спасибо. Я сохранил \"{loc}\" для тебя."
     },
     "region_error" : {
         "en" : "Sorry, I can't find \"{loc}\".",
-        "de" : "Ich kann \"{loc}\" leider nicht finden."
+        "de" : "Ich kann \"{loc}\" leider nicht finden.",
+        "ru" : "К сожалению, не могу найти \"{loc}\"."
     },
     "geo_success" : {
         "en" : "Thank you, I have stored the coordinates `{lat} {lng}` ({loc}).",
-        "de" : "Danke. Ich habe habe die Koordinaten `{lat} {lng}` ({loc}) abgespeichert."
+        "de" : "Danke. Ich habe habe die Koordinaten `{lat} {lng}` ({loc}) abgespeichert.",
+        "ru" : "Спасибо. Я сохранил координаты `{lat} {lng}` ({loc}) для тебя."
     },
     "geo_help" : {
         "en" : "Sorry, I could not parse your coordinates. Please pass latitude and longitude like this: `/geo <lat> <lng>` command.",
-        "de" : "Tut mir Leid, ich konnte deine Angaben nicht interpretieren. Bitte ergänze Breiten- und Längengrad: `/geo <lat> <lng>` Befehl."
+        "de" : "Tut mir Leid, ich konnte deine Angaben nicht interpretieren. Bitte ergänze Breiten- und Längengrad: `/geo <lat> <lng>` Befehl.",
+        "ru" : "К сожалению, не могу распознать твои координаты. Пожалуйста, добавь широту и долготу в команду вот так: `/geo <широта> <долгота>`."
     },
     "get_found" : {
         "en" : "The following data is stored about you:\n    Location: {loc}\n    Coordinates: {lat}, {lng}\n    Last updated: {time}",
-        "de" : "Folgende Daten sind für dich abgespeichert:\n    Ort: {loc}\n    Koordinaten: {lat}, {lng}\n    Zuletzt aktualisiert: {time}"
+        "de" : "Folgende Daten sind für dich abgespeichert:\n    Ort: {loc}\n    Koordinaten: {lat}, {lng}\n    Zuletzt aktualisiert: {time}",
+        "ru" : "Твои сохранённые данные:\n    Место: {loc}\n    Координаты: {lat}, {lng}\n    Последнее обновление: {time}"
     },
     "get_notfound" : {
         "en" : "There is no data stored about you.",
-        "de" : "Für dich sind keine Daten vorhanden."
+        "de" : "Für dich sind keine Daten vorhanden.",
+        "ru" : "У тебя нет сохранённых данных."
     },
     "delete" : {
         "en" : "All your data has been deleted.",
-        "de" : "Deine Daten wurden gelöscht."
+        "de" : "Deine Daten wurden gelöscht.",
+        "ru" : "Все твои данные были удалены."
     },
     "unkown" : {
         "en" : "Sorry, I don't know that command.",
-        "de" : "Tut mir Leid, ich verstehe deinen Befehl nicht."
+        "de" : "Tut mir Leid, ich verstehe deinen Befehl nicht.",
+        "ru" : "К сожалению, не могу распознать твою команду."
     },
     "hint" : {
         "en" : "\nHint: Start a chat with me (@{botname}), so I can answer you privately.",
-        "de" : "\nHinweis: Starte einen Chat mit mir (@{botname}), damit ich dir privat antworten kann."
+        "de" : "\nHinweis: Starte einen Chat mit mir (@{botname}), damit ich dir privat antworten kann.",
+        "ru" : "\nПодсказка: Начни чат со мной (@{botname}, чтобы я мог ответить тебе лично."
     }
 }
