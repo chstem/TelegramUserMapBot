@@ -36,7 +36,7 @@ class UserMapBot:
         # local database
         self.db = db.UserDatabase(self.config.database_file)
         # authorizing with Telegram Bot API
-        self.updater = Updater(token=self.config.BOT_TOKEN)
+        self.updater = Updater(token=self.config.BOT_TOKEN, use_context=True)
         self.dispatcher = self.updater.dispatcher
 
         # logging
