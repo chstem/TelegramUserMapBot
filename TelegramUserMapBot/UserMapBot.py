@@ -10,6 +10,7 @@ import requests
 from requests.compat import urljoin
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 from telegram import ParseMode, error
+from telegram import Bot, Update
 from pkg_resources import resource_filename
 
 import TelegramUserMapBot.Database as db
@@ -113,8 +114,8 @@ class UserMapBot:
         elif fname.endswith('.json'):
             self.db.export_geojson(fname)
 
-    def send_message(self, bot, update, text, **kwargs):
-        """Wrapper for bot.send_message. Try to send to user first, then to orignal channel."""
+    def send_message(self, bot: Bot, update: Update, text, **kwargs):
+        """Wrapper for bot: Bot.send_message. Try to send to user first, then to orignal channel."""
         chat_id = update.message.chat_id
         user_id = update.message.from_user.id
         try:
@@ -130,19 +131,19 @@ class UserMapBot:
             text = self.l10n[key].get('en')
         return text
 
-    ### define bot commands
+    ### define bot: Bot commands
 
-    def start(self, bot, update):
+    def start(self, bot: Bot, update: Update):
         self.send_message(bot, update, self.gettext('start'), parse_mode=ParseMode.MARKDOWN)
 
-    def intro(self, bot, update):
+    def intro(self, bot: Bot, update: Update):
         text = self.gettext('intro').format(username=bot.username, map=self.config.map_url)
         bot.send_message(update.message.chat_id, text, parse_mode=ParseMode.MARKDOWN)
 
-    def show_help(self, bot, update):
+    def show_help(self, bot: Bot, update: Update):
         self.send_message(bot, update, self.gettext('help'), parse_mode=ParseMode.MARKDOWN)
 
-    def region(self, bot, update):
+    def region(self, bot: Bot, update: Update):
 
         i = update.message.text.find(' ')
         location = update.message.text[i+1:]   # everything after first space
@@ -164,7 +165,7 @@ class UserMapBot:
             text = self.gettext('region_error').format(loc=location)
             self.send_message(bot, update, text)
 
-    def geo(self, bot, update):
+    def geo(self, bot: Bot, update: Update):
 
         cmd = update.message.text.split()
         coord = update.message.text[5:]     # cut '/geo '
@@ -192,10 +193,10 @@ class UserMapBot:
         else:
             self.send_message(bot, update, self.gettext('geo_help'))
 
-    def show_map(self, bot, update):
+    def show_map(self, bot: Bot, update: Update):
         self.send_message(bot, update, self.config.map_url)
 
-    def get(self, bot, update):
+    def get(self, bot: Bot, update: Update):
         user = self.db.get_user(update.message.from_user.id)
         if user:
             text = self.gettext('get_found').format(
@@ -208,12 +209,12 @@ class UserMapBot:
             text = self.gettext('get_notfound')
         self.send_message(bot, update, text)
 
-    def delete(self, bot, update):
+    def delete(self, bot: Bot, update: Update):
         self.db.delete_user(update.message.from_user.id)
         self.send_message(bot, update, self.gettext('delete'))
         self.export()
 
-    def unknown(self, bot, update):
+    def unknown(self, bot: Bot update: Update):
         self.send_message(bot, update, self.gettext('unkown'))
 
 def main():
