@@ -17,6 +17,8 @@ pip install git+https://github.com/chstem/TelegramUserMapBot.git
 
 - After each update, the data is exported to a CSV or GeoJSON file. In `config.json` you can set up a path for that file, which is publicly accessible on your webserver. Add its URL to the map service as "remote data" source, so it can fetch updates automatically.
 
+- If you want journald based logging set `log_file` to `journald` in `/etc/TelegramUserMapBot/config.json`.
+
 - Finally, run `telegramusermapbot`.
 
 ### List of Bot commands
