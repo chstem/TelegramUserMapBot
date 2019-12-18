@@ -8,7 +8,7 @@ from types import SimpleNamespace
 
 import requests
 from requests.compat import urljoin
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
 from telegram import ParseMode, error
 from telegram import Bot, Update
 from pkg_resources import resource_filename
@@ -114,15 +114,15 @@ class UserMapBot:
         elif fname.endswith('.json'):
             self.db.export_geojson(fname)
 
-    def send_message(self, bot: Bot, update: Update, text: str, **kwargs):
+    def send_message(self, update: Update, context: CallbackContext, text: str, **kwargs):
         """Wrapper for bot: Bot.send_message. Try to send to user first, then to orignal channel."""
         chat_id = update.message.chat_id
         user_id = update.message.from_user.id
         try:
-            bot.send_message(user_id, text, **kwargs)
+            context.bot.send_message(user_id, text, **kwargs)
         except error.Unauthorized:
-            text += self.gettext('hint').format(botname=bot.username)
-            bot.send_message(chat_id, text, **kwargs)
+            text += self.gettext('hint').format(botname=context.bot.username)
+            context.bot.send_message(chat_id, text, **kwargs)
 
     def gettext(self, key: str):
         text = self.l10n[key].get(self.config.lang)
