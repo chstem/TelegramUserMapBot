@@ -15,6 +15,10 @@ from pkg_resources import resource_filename
 
 import TelegramUserMapBot.Database as db
 
+try:
+    from systemd import journal
+except ImportError:
+    pass
 
 class UserMapBot:
     __CONFIG_DIR = '/etc/TelegramUserMapBot'
@@ -46,10 +50,14 @@ class UserMapBot:
             logging.Formatter(
                 '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
-        log_handle = logging.FileHandler(self.config.log_file)
-        log_handle.setLevel(logging.INFO)
-        log_handle.setFormatter(formatter)
+        if self.config.log_file == 'journald':
+            log_handle = journal.JournaldLogHandler(
+                SYSLOG_IDENTIFIER='TelegramUserMaptBot')
+        else:
+            log_handle = logging.FileHandler(self.config.log_file)
 
+        log_handle.setFormatter(formatter)
+        log_handle.setLevel(logging.INFO)
         logger.addHandler(log_handle)
 
 
