@@ -4,11 +4,12 @@ import sys
 import json
 import logging
 import re
+from types import SimpleNamespace
+
 import requests
 from requests.compat import urljoin
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 from telegram import ParseMode, error
-from types import SimpleNamespace
 from pkg_resources import resource_filename
 
 import TelegramUserMapBot.Database as db
