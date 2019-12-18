@@ -22,7 +22,7 @@ class UserMapBot:
 
     __L10N_FILE = resource_filename(__name__, "l10n.json")
 
-    def __init__(self, config):
+    def __init__(self, config: str):
 
         with open(config) as fd:
             config = json.load(fd)
@@ -86,7 +86,7 @@ class UserMapBot:
 
     ### utililty functions
 
-    def parse_location(self, location):
+    def parse_location(self, location: str):
         url = urljoin(self.config.DSTK_URL, '/maps/api/geocode/json')
         payload = {'address' : location}
         r = requests.get(url, params=payload)
@@ -97,7 +97,7 @@ class UserMapBot:
         else:
             return None
 
-    def parse_geo(self, lat, lng):
+    def parse_geo(self, lat: str, lng: str):
         url = urljoin(self.config.DSTK_URL, 'coordinates2politics/{},{}'.format(lat,lng))
         r = requests.get(url)
         results = r.json()
@@ -106,7 +106,7 @@ class UserMapBot:
         else:
             return ''
 
-    def export(self, fname=''):
+    def export(self, fname: str = ''):
         if not fname:
             fname = self.config.export_file
         if fname.endswith('.csv'):
@@ -114,7 +114,7 @@ class UserMapBot:
         elif fname.endswith('.json'):
             self.db.export_geojson(fname)
 
-    def send_message(self, bot: Bot, update: Update, text, **kwargs):
+    def send_message(self, bot: Bot, update: Update, text: str, **kwargs):
         """Wrapper for bot: Bot.send_message. Try to send to user first, then to orignal channel."""
         chat_id = update.message.chat_id
         user_id = update.message.from_user.id
@@ -124,7 +124,7 @@ class UserMapBot:
             text += self.gettext('hint').format(botname=bot.username)
             bot.send_message(chat_id, text, **kwargs)
 
-    def gettext(self, key):
+    def gettext(self, key: str):
         text = self.l10n[key].get(self.config.lang)
         if not text:
             # fallback to en
