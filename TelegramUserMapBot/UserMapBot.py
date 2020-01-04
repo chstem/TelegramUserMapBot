@@ -8,9 +8,9 @@ from types import SimpleNamespace
 
 import requests
 from requests.compat import urljoin
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 from telegram import ParseMode, error
-from telegram import Bot, Update
+from telegram import Bot
 from pkg_resources import resource_filename
 
 import TelegramUserMapBot.Database as db
@@ -22,7 +22,7 @@ class UserMapBot:
 
     __L10N_FILE = resource_filename(__name__, "l10n.json")
 
-    def __init__(self, config: str):
+    def __init__(self, config):
 
         with open(config) as fd:
             config = json.load(fd)
@@ -86,7 +86,7 @@ class UserMapBot:
 
     ### utililty functions
 
-    def parse_location(self, location: str):
+    def parse_location(self, location):
         url = urljoin(self.config.DSTK_URL, '/maps/api/geocode/json')
         payload = {'address' : location}
         r = requests.get(url, params=payload)
@@ -97,7 +97,7 @@ class UserMapBot:
         else:
             return None
 
-    def parse_geo(self, lat: str, lng: str):
+    def parse_geo(self, lat, lng):
         url = urljoin(self.config.DSTK_URL, 'coordinates2politics/{},{}'.format(lat,lng))
         r = requests.get(url)
         results = r.json()
@@ -106,7 +106,7 @@ class UserMapBot:
         else:
             return ''
 
-    def export(self, fname: str = ''):
+    def export(self, fname=''):
         if not fname:
             fname = self.config.export_file
         if fname.endswith('.csv'):
@@ -114,8 +114,8 @@ class UserMapBot:
         elif fname.endswith('.json'):
             self.db.export_geojson(fname)
 
-    def send_message(self, update: Update, context: CallbackContext, text: str, **kwargs):
-        """Wrapper for bot: Bot.send_message. Try to send to user first, then to orignal channel."""
+    def send_message(self, update, context, text, **kwargs):
+        """Wrapper for Bot.send_message. Try to send to user first, then to orignal channel."""
         chat_id = update.message.chat_id
         user_id = update.message.from_user.id
         try:
@@ -124,7 +124,7 @@ class UserMapBot:
             text += self.gettext('hint').format(botname=context.bot.username)
             context.bot.send_message(chat_id, text, **kwargs)
 
-    def gettext(self, key: str):
+    def gettext(self, key):
         text = self.l10n[key].get(self.config.lang)
         if not text:
             # fallback to en
@@ -133,17 +133,17 @@ class UserMapBot:
 
     ### define bot: Bot commands
 
-    def start(self, update: Update, context: CallbackContext):
+    def start(self, update, context):
         self.send_message(update, context, self.gettext('start'), parse_mode=ParseMode.MARKDOWN)
 
-    def intro(self, update: Update, context: CallbackContext):
+    def intro(self, update, context):
         text = self.gettext('intro').format(username=context.bot.username, map=self.config.map_url)
         context.bot.send_message(update.message.chat_id, text, parse_mode=ParseMode.MARKDOWN)
 
-    def show_help(self, update: Update, context: CallbackContext):
+    def show_help(self, update, context):
         self.send_message(update, context, self.gettext('help'), parse_mode=ParseMode.MARKDOWN)
 
-    def region(self, update: Update, context: CallbackContext):
+    def region(self, update, context):
 
         i = update.message.text.find(' ')
         location = update.message.text[i+1:]   # everything after first space
@@ -165,7 +165,7 @@ class UserMapBot:
             text = self.gettext('region_error').format(loc=location)
             self.send_message(update, context, text)
 
-    def geo(self, update: Update, context: CallbackContext):
+    def geo(self, update, context):
 
         cmd = update.message.text.split()
         coord = update.message.text[5:]     # cut '/geo '
@@ -193,10 +193,10 @@ class UserMapBot:
         else:
             self.send_message(update, context, self.gettext('geo_help'))
 
-    def show_map(self, update: Update, context: CallbackContext):
+    def show_map(self, update, context):
         self.send_message(update, context, self.config.map_url)
 
-    def get(self,  update: Update, context: CallbackContext):
+    def get(self,  update, context):
         user = self.db.get_user(update.message.from_user.id)
         if user:
             text = self.gettext('get_found').format(
@@ -209,12 +209,12 @@ class UserMapBot:
             text = self.gettext('get_notfound')
         self.send_message(update, context, text)
 
-    def delete(self, update: Update, context: CallbackContext):
+    def delete(self, update, context):
         self.db.delete_user(update.message.from_user.id)
         self.send_message(update, context, self.gettext('delete'))
         self.export()
 
-    def unknown(self, update: Update, context: CallbackContext):
+    def unknown(self, update, context):
         self.send_message(update, context, self.gettext('unkown'))
 
 def main():
