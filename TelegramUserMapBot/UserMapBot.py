@@ -134,14 +134,14 @@ class UserMapBot:
     ### define bot: Bot commands
 
     def start(self, update: Update, context: CallbackContext):
-        self.send_message(context, update, self.gettext('start'), parse_mode=ParseMode.MARKDOWN)
+        self.send_message(update, context, self.gettext('start'), parse_mode=ParseMode.MARKDOWN)
 
     def intro(self, update: Update, context: CallbackContext):
         text = self.gettext('intro').format(username=context.bot.username, map=self.config.map_url)
         context.bot.send_message(update.message.chat_id, text, parse_mode=ParseMode.MARKDOWN)
 
     def show_help(self, update: Update, context: CallbackContext):
-        self.send_message(context, update, self.gettext('help'), parse_mode=ParseMode.MARKDOWN)
+        self.send_message(update, context, self.gettext('help'), parse_mode=ParseMode.MARKDOWN)
 
     def region(self, update: Update, context: CallbackContext):
 
@@ -149,7 +149,7 @@ class UserMapBot:
         location = update.message.text[i+1:]   # everything after first space
 
         if not location:
-            self.send_message(context, update,
+            self.send_message(update, context,
                               self.gettext('region_help'), parse_mode=ParseMode.MARKDOWN)
             return
 
@@ -159,11 +159,11 @@ class UserMapBot:
             lat, lng = geo
             self.db.set_location(update.message.from_user.id, location, lat, lng)
             text = self.gettext('region_success').format(loc=location)
-            self.send_message(context, update, text, parse_mode=ParseMode.MARKDOWN)
+            self.send_message(update, context, text, parse_mode=ParseMode.MARKDOWN)
             self.export()
         else:
             text = self.gettext('region_error').format(loc=location)
-            self.send_message(context, update, text)
+            self.send_message(update, context, text)
 
     def geo(self, update: Update, context: CallbackContext):
 
@@ -182,19 +182,19 @@ class UserMapBot:
                     lng = lng.replace(',', '.')
                 location = self.parse_geo(lat, lng)
             except:
-                self.send_message(context, update, self.gettext('geo_help'))
+                self.send_message(update, context, self.gettext('geo_help'))
                 raise
 
             self.db.set_location(update.message.from_user.id, location, lat, lng)
             text = self.gettext('geo_success').format(lat=lat, lng=lng, loc=location)
-            self.send_message(context, update, text, parse_mode=ParseMode.MARKDOWN)
+            self.send_message(update, context, text, parse_mode=ParseMode.MARKDOWN)
             self.export()
 
         else:
-            self.send_message(context, update, self.gettext('geo_help'))
+            self.send_message(update, context, self.gettext('geo_help'))
 
     def show_map(self, update: Update, context: CallbackContext):
-        self.send_message(context, update, self.config.map_url)
+        self.send_message(update, context, self.config.map_url)
 
     def get(self,  update: Update, context: CallbackContext):
         user = self.db.get_user(update.message.from_user.id)
@@ -207,15 +207,15 @@ class UserMapBot:
             )
         else:
             text = self.gettext('get_notfound')
-        self.send_message(context, update, text)
+        self.send_message(update, context, text)
 
     def delete(self, update: Update, context: CallbackContext):
         self.db.delete_user(update.message.from_user.id)
-        self.send_message(context, update, self.gettext('delete'))
+        self.send_message(update, context, self.gettext('delete'))
         self.export()
 
     def unknown(self, update: Update, context: CallbackContext):
-        self.send_message(context, update, self.gettext('unkown'))
+        self.send_message(update, context, self.gettext('unkown'))
 
 def main():
     import argparse
