@@ -148,7 +148,7 @@ class UserMapBot:
         i = update.message.text.find(' ')
         location = update.message.text[i+1:]   # everything after first space
 
-        if not location:
+        if not location or i == -1:
             self.send_message(update, context,
                               self.gettext('region_help'), parse_mode=ParseMode.MARKDOWN)
             return
