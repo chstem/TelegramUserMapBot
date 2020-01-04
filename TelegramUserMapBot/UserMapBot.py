@@ -4,11 +4,13 @@ import sys
 import json
 import logging
 import re
+from types import SimpleNamespace
+
 import requests
 from requests.compat import urljoin
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 from telegram import ParseMode, error
-from types import SimpleNamespace
+from telegram import Bot
 from pkg_resources import resource_filename
 
 import TelegramUserMapBot.Database as db
@@ -34,7 +36,7 @@ class UserMapBot:
         # local database
         self.db = db.UserDatabase(self.config.database_file)
         # authorizing with Telegram Bot API
-        self.updater = Updater(token=self.config.BOT_TOKEN)
+        self.updater = Updater(token=self.config.BOT_TOKEN, use_context=True)
         self.dispatcher = self.updater.dispatcher
 
         # logging
@@ -112,15 +114,15 @@ class UserMapBot:
         elif fname.endswith('.json'):
             self.db.export_geojson(fname)
 
-    def send_message(self, bot, update, text, **kwargs):
-        """Wrapper for bot.send_message. Try to send to user first, then to orignal channel."""
+    def send_message(self, update, context, text, **kwargs):
+        """Wrapper for Bot.send_message. Try to send to user first, then to orignal channel."""
         chat_id = update.message.chat_id
         user_id = update.message.from_user.id
         try:
-            bot.send_message(user_id, text, **kwargs)
+            context.bot.send_message(user_id, text, **kwargs)
         except error.Unauthorized:
-            text += self.gettext('hint').format(botname=bot.username)
-            bot.send_message(chat_id, text, **kwargs)
+            text += self.gettext('hint').format(botname=context.bot.username)
+            context.bot.send_message(chat_id, text, **kwargs)
 
     def gettext(self, key):
         text = self.l10n[key].get(self.config.lang)
@@ -129,25 +131,25 @@ class UserMapBot:
             text = self.l10n[key].get('en')
         return text
 
-    ### define bot commands
+    ### define bot: Bot commands
 
-    def start(self, bot, update):
-        self.send_message(bot, update, self.gettext('start'), parse_mode=ParseMode.MARKDOWN)
+    def start(self, update, context):
+        self.send_message(update, context, self.gettext('start'), parse_mode=ParseMode.MARKDOWN)
 
-    def intro(self, bot, update):
-        text = self.gettext('intro').format(username=bot.username, map=self.config.map_url)
-        bot.send_message(update.message.chat_id, text, parse_mode=ParseMode.MARKDOWN)
+    def intro(self, update, context):
+        text = self.gettext('intro').format(username=context.bot.username, map=self.config.map_url)
+        context.bot.send_message(update.message.chat_id, text, parse_mode=ParseMode.MARKDOWN)
 
-    def show_help(self, bot, update):
-        self.send_message(bot, update, self.gettext('help'), parse_mode=ParseMode.MARKDOWN)
+    def show_help(self, update, context):
+        self.send_message(update, context, self.gettext('help'), parse_mode=ParseMode.MARKDOWN)
 
-    def region(self, bot, update):
+    def region(self, update, context):
 
         i = update.message.text.find(' ')
         location = update.message.text[i+1:]   # everything after first space
 
         if not location:
-            self.send_message(bot, update,
+            self.send_message(update, context,
                               self.gettext('region_help'), parse_mode=ParseMode.MARKDOWN)
             return
 
@@ -157,13 +159,13 @@ class UserMapBot:
             lat, lng = geo
             self.db.set_location(update.message.from_user.id, location, lat, lng)
             text = self.gettext('region_success').format(loc=location)
-            self.send_message(bot, update, text, parse_mode=ParseMode.MARKDOWN)
+            self.send_message(update, context, text, parse_mode=ParseMode.MARKDOWN)
             self.export()
         else:
             text = self.gettext('region_error').format(loc=location)
-            self.send_message(bot, update, text)
+            self.send_message(update, context, text)
 
-    def geo(self, bot, update):
+    def geo(self, update, context):
 
         cmd = update.message.text.split()
         coord = update.message.text[5:]     # cut '/geo '
@@ -180,21 +182,21 @@ class UserMapBot:
                     lng = lng.replace(',', '.')
                 location = self.parse_geo(lat, lng)
             except:
-                self.send_message(bot, update, self.gettext('geo_help'))
+                self.send_message(update, context, self.gettext('geo_help'))
                 raise
 
             self.db.set_location(update.message.from_user.id, location, lat, lng)
             text = self.gettext('geo_success').format(lat=lat, lng=lng, loc=location)
-            self.send_message(bot, update, text, parse_mode=ParseMode.MARKDOWN)
+            self.send_message(update, context, text, parse_mode=ParseMode.MARKDOWN)
             self.export()
 
         else:
-            self.send_message(bot, update, self.gettext('geo_help'))
+            self.send_message(update, context, self.gettext('geo_help'))
 
-    def show_map(self, bot, update):
-        self.send_message(bot, update, self.config.map_url)
+    def show_map(self, update, context):
+        self.send_message(update, context, self.config.map_url)
 
-    def get(self, bot, update):
+    def get(self,  update, context):
         user = self.db.get_user(update.message.from_user.id)
         if user:
             text = self.gettext('get_found').format(
@@ -205,15 +207,15 @@ class UserMapBot:
             )
         else:
             text = self.gettext('get_notfound')
-        self.send_message(bot, update, text)
+        self.send_message(update, context, text)
 
-    def delete(self, bot, update):
+    def delete(self, update, context):
         self.db.delete_user(update.message.from_user.id)
-        self.send_message(bot, update, self.gettext('delete'))
+        self.send_message(update, context, self.gettext('delete'))
         self.export()
 
-    def unknown(self, bot, update):
-        self.send_message(bot, update, self.gettext('unkown'))
+    def unknown(self, update, context):
+        self.send_message(update, context, self.gettext('unkown'))
 
 def main():
     import argparse
