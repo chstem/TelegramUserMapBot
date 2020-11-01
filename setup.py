@@ -119,6 +119,11 @@ setup(
     # https://packaging.python.org/en/latest/requirements.html
     install_requires=['peewee', 'requests', 'python-telegram-bot'],
 
+    # Optional dependencies
+    extra_requires={
+        'journald logging': ['systemd'],
+    },
+
     # If there are data files included in your packages that need to be
     # installed, specify them here.
     #
